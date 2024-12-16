@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Missing Word Game</title>
+  <link rel="shortcut icon" href="insta1.jpg" type="image/x-icon">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f9;
+      color: #333;
+      flex-direction: column;
+      padding: 20px;
+    }
+    h1 {
+      color: #1e3a8a; /* Dark Blue */
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    #score {
+      font-size: 24px;
+      color: #047857; /* Vibrant Green */
+      margin-bottom: 30px;
+    }
+    #word {
+      font-size: 30px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #1e40af; /* Darker Blue */
+      margin-bottom: 30px;
+    }
+    input {
+      font-size: 20px;
+      padding: 20px 40px; /* Increased left-right padding for more space */
+      margin-top: 10px;
+      border: 2px solid #1e3a8a; /* Dark Blue */
+      border-radius: 5px;
+      width: 150px; /* Increase the width of the input */
+      text-align: center;
+      transition: all 0.3s ease-in-out;
+    }
+    input::placeholder {
+      color: #888; /* Light gray placeholder text */
+      font-size: 20px; /* Larger font size for placeholder */
+      letter-spacing: 5px; /* Increase space between letters */
+    }
+    input:focus {
+      outline: none;
+      border-color: #064e3b; /* Dark Green */
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 18px;
+      background-color: #064e3b; /* Dark Green */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: all 0.3s ease;
+      width: 120px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #065f46; /* Slightly lighter Dark Green */
+    }
+    #result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .correct {
+      color: #10b981; /* Bright Green */
+    }
+    .incorrect {
+      color: #ef4444; /* Bright Red */
+    }
+    .input-container {
+      display: flex;
+      flex-direction: column; /* Align items vertically */
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Missing Word Game</h1>
+  <p>Guess the missing letter in the word:</p>
+  <p id="score">Score: 0</p>
+  <h2 id="word"></h2>
+
+  <div class="input-container">
+    <!-- Input field now placed above the button -->
+    <input type="text" id="guess" maxlength="1" placeholder="enter here " onkeydown="handleKeyPress(event)">
+    <button onclick="checkGuess()">Guess</button>
+  </div>
+
+  <p id="result"></p>
+
+  <script>
+    const words = ["mango","pineapple","watermelon","Pomegranate","apple", "banana", "grape", "orange","grape","strawbery","Apricot","Peach"];
+    let usedWords = []; // To track used words
+    let randomWord = "";
+    let randomIndex = -1;
+    let score = 0; // Initialize score
+
+    // Function to start a new round with a new word and missing letter
+    function startNewRound() {
+      if (usedWords.length === words.length) {
+        usedWords = [];
+      }
+
+      do {
+        randomWord = words[Math.floor(Math.random() * words.length)];
+      } while (usedWords.includes(randomWord));
+
+      usedWords.push(randomWord);
+
+      randomIndex = Math.floor(Math.random() * randomWord.length);
+
+      let wordWithMissingLetter = "";
+      for (let i = 0; i < randomWord.length; i++) {
+        if (i === randomIndex) {
+          wordWithMissingLetter += "_";
+        } else {
+          wordWithMissingLetter += randomWord[i];
+        }
+      }
+      
+      document.getElementById("word").textContent = wordWithMissingLetter;
+      document.getElementById("result").textContent = "";
+    }
+
+    startNewRound();
+
+    function checkGuess() {
+      const playerGuess = document.getElementById("guess").value.toLowerCase();
+      const resultElement = document.getElementById("result");
+
+      if (playerGuess === randomWord[randomIndex]) {
+        score++;
+        resultElement.textContent = "🎉 Correct! You guessed the missing letter!";
+        resultElement.className = "correct";
+        document.getElementById("score").textContent = `Score: ${score}`;
+        setTimeout(startNewRound, 1000);
+      } else {
+        resultElement.textContent = "❌ Wrong guess. Try again!";
+        resultElement.className = "incorrect";
+      }
+
+      document.getElementById("guess").value = "";
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === "Enter") {
+        checkGuess();
+      }
+    }
+  </script>
+</body>
+</html>
